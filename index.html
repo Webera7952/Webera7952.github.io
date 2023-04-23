@@ -1,21 +1,65 @@
 <!DOCTYPE html>
 <html>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+
+<p>Click the "Try it" button to create a BUTTON element with a "Click me" text.</p>
+
+<button onclick="next_month()">Move Forward</button>
+
+  <p>
+      Profit = <span id="profit"></span><br>
+      Cost = <span id="cost"></span><br>
+      Budget = <span id="budget"></span><br>
+      Purchasers = <span id="purchasers"></span><br>
+      Rating = <span id="rating"></span><br>
+
   
   
-  
-<button onclick="myFunction()">Try it</button>
+  </p>
+
+</body>
 
 <script>
+var profit = 1; 
+var cost = 60;
+var budget = 1;
+var purchasers = 1;
+var rating = 1;
+
+var max_employees = 1;
+var max_salary = 1;
+var num_of_employees = 1;
+var salary = 1;
+
+var company_name = "The Test Corporation";
+
+
+
+
 function myFunction() {
   var x = document.createElement("BUTTON");
   var t = document.createTextNode("Click me");
   x.appendChild(t);
   document.body.appendChild(x);
+}
 
+function next_month(){
+	profit = (purchasers * cost) - budget;
+    budget = budget + (profit / 2);
+    rating = Math.sqrt((num_of_employees/max_employees)*(salary/max_salary)); 
+    purchasers = 30000000 * (rating^2);
+    update_display();
+}
 
+function update_display(){
+document.getElementById("profit").innerHTML = profit;
+document.getElementById("cost").innerHTML = cost;
+document.getElementById("budget").innerHTML = budget;
+document.getElementById("purchasers").innerHTML = purchasers;
+document.getElementById("rating").innerHTML = rating;
+}
+</script>
 
-}</body>
+</body>
 </html>
+//https://www.tutorialspoint.com/online_html_editor.php
