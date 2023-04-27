@@ -1,65 +1,118 @@
 <!DOCTYPE html>
 <html>
+
 <body>
+    <p>You are the head of <b><span id="comp_name"></span></b>! You currently have <b><span id="employee_count"></span></b> Employees, each with a current per-media salary of $<b><span id="salary"></span></span></span></span></b>!<br>Your goal is to split your budget of $<b><span id="budget"></span></b> between your employees.<br>You are able to vary the number of employees and salary at will, but keep in mind that losing employees or lowering salaries will decrease the quality of your media.<br><br>Good luck!!
+    
+    </p>
+    
+     <form>
+  <label for="fname">Number of Employees hired: </label><br>
+  <input type="number" id="fnum" name="fnum", value = 0><br>
+  <label for="lname">Salary per Employee:</label><br>
+  <input type="number" id="fsal" name="fsal", value = 0>
+</form> 
+    
+    <button onclick="formButton()", id="input_button">Input values</button>
+    <b><span id="form_output"></span></b>
+<br><br>
+    <button onclick="next_month()", id="sale_button">Put Media for Sale!</button>
 
-<p>Click the "Try it" button to create a BUTTON element with a "Click me" text.</p>
-
-<button onclick="next_month()">Move Forward</button>
-
-  <p>
-      Profit = <span id="profit"></span><br>
-      Cost = <span id="cost"></span><br>
-      Budget = <span id="budget"></span><br>
-      Purchasers = <span id="purchasers"></span><br>
-      Rating = <span id="rating"></span><br>
-
-  
-  
-  </p>
+    <br><br>
+    
+    <b><span id="sold_out"></span></b>
+    </div>
+    <button onclick="formButton()", id="continue_button">Continue to next media release</button>
 
 </body>
 
 <script>
-var profit = 1; 
-var cost = 60;
-var budget = 1;
-var purchasers = 1;
-var rating = 1;
+    var profit = 0;
+    var cost = 60;
+    var budget = 10000;
+    var oldbudget = 10;
+    var purchasers = 30000000 * Math.pow(rating, 2);
+    var rating = 0.75;
 
-var max_employees = 1;
-var max_salary = 1;
-var num_of_employees = 1;
-var salary = 1;
+    var max_employees = 1000;
+    var max_salary = 4000;
+    var num_of_employees = 500;
+    var salary = 2000;
+    
+    var form_num = 0;
+    var form_sal = 0;
 
-var company_name = "The Test Corporation";
-
-
-
-
-function myFunction() {
-  var x = document.createElement("BUTTON");
-  var t = document.createTextNode("Click me");
-  x.appendChild(t);
-  document.body.appendChild(x);
-}
-
-function next_month(){
-	profit = (purchasers * cost) - budget;
-    budget = budget + (profit / 2);
-    rating = Math.sqrt((num_of_employees/max_employees)*(salary/max_salary)); 
-    purchasers = 30000000 * (rating^2);
+    var company_name = "The Test Corporation";
+    var form_out = "<- Press me once your values are set!"
+    
+      document.getElementById("continue_button").setAttribute("hidden", "hidden");
+        document.getElementById("sale_button").setAttribute("hidden", "hidden");
+    
+    var sold_out = "";
     update_display();
-}
+    update_form_text();
+    
+    function formButton(){
+        form_num = document.getElementById("fnum").value;
+        form_sal = document.getElementById("fsal").value;
 
-function update_display(){
-document.getElementById("profit").innerHTML = profit;
-document.getElementById("cost").innerHTML = cost;
-document.getElementById("budget").innerHTML = budget;
-document.getElementById("purchasers").innerHTML = purchasers;
-document.getElementById("rating").innerHTML = rating;
-}
+        if((form_num * form_sal) <= budget){
+            form_out = "You're good to go! Click 'Put Media for Sale' to see your profits!";
+            document.getElementById("input_button").setAttribute("hidden", "hidden");
+            document.getElementById("sale_button").removeAttribute("hidden");
+        } else {
+            form_out = "It would cost you $" + (form_num * form_sal) + " to pay that many employees that much! It exceeds your budget!";
+        }
+        num_of_employees = form_num;
+        salary = form_sal;
+        update_form_text();
+    }
+
+
+    function myFunction() {
+        var x = document.createElement("BUTTON");
+        var t = document.createTextNode("Click me");
+        x.appendChild(t);
+        document.body.appendChild(x);
+    }
+
+    function next_month() {
+         rating = Math.sqrt((num_of_employees / max_employees) * (salary / max_salary));
+                purchasers = 30000000 * (Math.pow(rating, 2));
+        profit = (purchasers * cost) - budget;
+        oldbudget = budget;
+        budget = oldbudget + (profit / 2);
+       
+        
+        sold_out = "Congrats! Based on your employees and how much you paid them, your media had a rating of " + rating*100 + "/100, which means that means an audience of " + purchasers + " viewed your media! Your profit ended up being $" + profit + "(" + purchasers + " * " + cost + " - " + oldbudget + ")" + ", which means your next budget is a total of $" + budget;
+        document.getElementById("sale_button").setAttribute("hidden", "hidden");
+            document.getElementById("continue_button").removeAttribute("hidden");
+        update_sale_text();
+    }
+
+    function update_display() {
+        //document.getElementById("profit").innerHTML = profit;
+        //document.getElementById("cost").innerHTML = cost;
+        document.getElementById("budget").innerHTML = Math.round(budget);
+        //document.getElementById("purchasers").innerHTML = purchasers;
+        //document.getElementById("rating").innerHTML = rating;
+        document.getElementById("comp_name").innerHTML = company_name;
+        document.getElementById("employee_count").innerHTML = num_of_employees;
+        document.getElementById("salary").innerHTML = salary;
+    }
+    
+    function update_form_text(){
+         document.getElementById("form_output").innerHTML = form_out;
+    }
+    function update_sale_text(){
+        document.getElementById("sold_out").innerHTML = sold_out;
+    }
+    
+    
 </script>
 
 </body>
-</html>
-//https://www.tutorialspoint.com/online_html_editor.php
+
+</html><br><br><br>
+Created by Austin Weber for Anthropology 230HON-015
+https://www.tutorialspoint.com/online_html_editor.php
