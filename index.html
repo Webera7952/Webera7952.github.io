@@ -2,27 +2,29 @@
 <html>
 
 <body>
-    <p>You are the head of <b><span id="comp_name"></span></b>! You currently have <b><span id="employee_count"></span></b> Employees, each with a current per-media salary of $<b><span id="salary"></span></span></span></span></b>!<br>Your goal is to split your budget of $<b><span id="budget"></span></b> between your employees.<br>You are able to vary the number of employees and salary at will, but keep in mind that losing employees or lowering salaries will decrease the quality of your media.<br><br>Good luck!!
-    
+    <p>You are the head of <b><span id="comp_name"></span></b>, which is worth $<b><span id="comp_worth"></span></b>! You currently have <b><span id="employee_count"></span></b> employees, each with a current per-media salary of $<b><span id="salary"></span></span></span></span></b>!<br>Your last media released was priced at $<b><span id="cost"></span></b>.Your goal is to split your budget of $<b><span id="budget"></span></b> between your employees.<br>You are able to vary the number of employees and salary at will, but keep in mind that losing employees or lowering salaries will decrease the quality of your media.<br><br>Good luck!!
+
     </p>
-    
-     <form>
-  <label for="fname">Number of Employees hired: </label><br>
-  <input type="number" id="fnum" name="fnum", value = 0><br>
-  <label for="lname">Salary per Employee:</label><br>
-  <input type="number" id="fsal" name="fsal", value = 0>
-</form> 
-    
-    <button onclick="formButton()", id="input_button">Input values</button>
+
+    <form>
+        <label for="fname">Number of Employees hired: </label><br>
+        <input type="number" id="fnum" name="fnum" , value=1000><br>
+        <label for="lname">Salary per Employee:</label><br>
+        <input type="number" id="fsal" name="fsal" , value=25000><br>
+        <label for="lname">Media Cost</label>:</label><br>
+        <input type="number" id="fcost" name="fcost" , value=50>
+    </form>
+
+    <button onclick="formButton()" , id="input_button">Input values</button>
     <b><span id="form_output"></span></b>
-<br><br>
-    <button onclick="next_month()", id="sale_button">Put Media for Sale!</button>
+    <br><br>
+    <button onclick="next_month()" , id="sale_button">Put Media for Sale!</button>
 
     <br><br>
-    
+
     <b><span id="sold_out"></span></b>
     </div>
-    <button onclick="continueButton()", id="continue_button">Continue to next media release</button>
+    <button onclick="continueButton()" , id="continue_button">Continue to next media release</button>
 
 </body>
 
@@ -31,47 +33,53 @@
     var cost = 50;
     var budget = 25000000;
     var oldbudget = 10;
-    var purchasers = 1000000 * Math.pow(rating, 2);
+    var audience = 1000000 * Math.pow(rating, 2);
     var rating = 0.75;
     var pirates = 0;
+    var entitled_pir = 0;
+    var cost_pir = 0;
+    var comp_pir = 0;
+    var purchasers = 0;
+    var pir_max = "";
 
     var max_employees = 1000;
     var max_salary = 25000;
     var num_of_employees = 1000;
     var salary = 25000;
-    
+
     var form_num = 0;
     var form_sal = 0;
 
     var company_name = "The Test Corporation";
-    var company_worth = 1000000;
-    var form_out = "<- Press me once your values are set!"
-    
-    var pir_media_up = 40;
-    var pir_media_low = 120;
-    var pir_comp_up = 25000000000;
-    var pir_comp_low = 150000000000;
-    
-      document.getElementById("continue_button").setAttribute("hidden", "hidden");
-        document.getElementById("sale_button").setAttribute("hidden", "hidden");
-    
+    var company_worth = 100000000;
+    var form_out = "<- Press me once your values are set!";
+
+    var pir_media_up = 120;
+    var pir_media_low = 60;
+    var pir_comp_up =  500000000;
+    var pir_comp_low = 100000000;
+
+    document.getElementById("continue_button").setAttribute("hidden", "hidden");
+    document.getElementById("sale_button").setAttribute("hidden", "hidden");
+
     var sold_out = "";
     update_display();
     update_form_text();
-    
+
     function gaussianRandom(mean, stdev) {
-    let u = 1 - Math.random(); // Converting [0,1) to (0,1]
-    let v = Math.random();
-    let z = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
-    // Transform to the desired mean and standard deviation:
-    return z * stdev + mean;
-}
-    
-    function formButton(){
+        let u = 1 - Math.random(); // Converting [0,1) to (0,1]
+        let v = Math.random();
+        let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        // Transform to the desired mean and standard deviation:
+        return (z * stdev) + mean;
+    }
+
+    function formButton() {
         form_num = document.getElementById("fnum").value;
         form_sal = document.getElementById("fsal").value;
+        cost = document.getElementById("fcost").value;
 
-        if((form_num * form_sal) <= budget){
+        if ((form_num * form_sal) <= budget) {
             form_out = "You're good to go! Click 'Put Media for Sale' to see your profits!";
             document.getElementById("input_button").setAttribute("hidden", "hidden");
             document.getElementById("sale_button").removeAttribute("hidden");
@@ -82,15 +90,15 @@
         salary = form_sal;
         update_form_text();
     }
-    
+
     function continueButton() {
         sold_out = "";
         form_out = "<- Press me once your values are set!"
         update_sale_text();
         update_form_text();
-                update_display();
+        update_display();
         document.getElementById("continue_button").setAttribute("hidden", "hidden");
-            document.getElementById("input_button").removeAttribute("hidden");
+        document.getElementById("input_button").removeAttribute("hidden");
     }
 
 
@@ -100,72 +108,85 @@
         x.appendChild(t);
         document.body.appendChild(x);
     }
-    
-    function determine_pirates(){
+
+    function determine_pirates() {
         pirates = 0;
-        for (int i = 0; i < purchasers; i++){
-        if (Math.random() * 100 == 0){
-            pirates++;
-        } else if (gaussianRandom(pir_media_up + pir_media_low / 2),(pir_media_up + pir_media_low / 4) < cost) {
-            pirates++;
-        } else if (gaussianRandom(pir_comp_up + pir_comp_low / 2),(pir_comp_up + pir_comp_low / 4) < cost) {
-            pirates++;
+        entitled_pir = 0;
+        cost_pir = 0;
+        comp_pir = 0;
+        for (var i = 0; i < audience; i++) {
+            if ((gaussianRandom(((pir_media_up + pir_media_low) / 2), ((pir_media_up - pir_media_low) / 4))) < cost) {
+                cost_pir++;
+            } else if ((gaussianRandom(((pir_comp_up + pir_comp_low) / 2), ((pir_comp_up - pir_comp_low) / 4))) < company_worth) {
+                comp_pir++;
+            } else if (Math.floor(Math.random() * 100) == 0) {
+                entitled_pir++;
+            } else {
+                //pirates++;
+            }
         }
-    }
+        pirates = entitled_pir + cost_pir + comp_pir;
     }
 
     function next_month() {
-           if (num_of_employees > max_employees){
+        if (num_of_employees > max_employees) {
             max_employees = num_of_employees;
         }
-        if (salary > max_salary){
+        if (salary > max_salary) {
             max_salary = salary;
         }
-         rating = Math.sqrt((num_of_employees / max_employees) * (salary / max_salary));
-         rating = Math.round(rating * 100)/100;
-         
-        purchasers = 3000000 * (Math.pow(rating, 2));
+        rating = Math.sqrt((num_of_employees / max_employees) * (salary / max_salary));
+        rating = Math.round(rating * 100) / 100;
+
+        audience = 3000000 * (Math.pow(rating, 2));
         determine_pirates();
-        purchasers = purchasers - pirates;
+        purchasers = audience - pirates;
         profit = (purchasers * cost) - budget;
         oldbudget = budget;
         budget = oldbudget + (profit / 2);
         company_worth = company_worth + (profit / 2);
-       
-                form_out = "";
-                update_form_text();
-     
-        sold_out = "Congrats! Based on your employees and how much you paid them, your media had a rating of " + rating*100 + "/100, which means that means an audience of " + purchasers + " viewed your media! Your profit ended up being $" + profit + 
-        /*"(" + purchasers + " * " + cost + " - " + oldbudget + ")" +*/
-        ", which means your next budget is a total of $" + budget;
+
+        form_out = "";
+        update_form_text();
+
+
+        if (comp_pir > cost_pir & comp_pir > entitled_pir) {
+            pir_max = "large company wealth";
+        } else if (cost_pir > entitled_pir & cost_pir > comp_pir) {
+            pir_max = "high media costs";
+        } else {
+            pir_max = "entitlement";
+        }
+
+        sold_out = "Congrats! Based on your employees and how much you paid them, your media had a rating of " + rating * 100 + "/100, which means that means an audience of " + audience + " viewed your media! However, " + pirates + " ended up pirating (" + Math.round((pirates / audience) * 100) + "% of the total audience). " + entitled_pir + " people pirated due to entitlement, " + cost_pir + " people pirated due to high media costs, and " + comp_pir + " pirated due to high company wealth. Your profit ended up being $" + profit +
+            /*"(" + audience + " * " + cost + " - " + oldbudget + ")" +*/
+            ", which means your next budget is a total of $" + budget;
         document.getElementById("sale_button").setAttribute("hidden", "hidden");
-            document.getElementById("continue_button").removeAttribute("hidden");
+        document.getElementById("continue_button").removeAttribute("hidden");
         update_sale_text();
     }
 
     function update_display() {
         //document.getElementById("profit").innerHTML = profit;
-        //document.getElementById("cost").innerHTML = cost;
+        document.getElementById("cost").innerHTML = cost;
         document.getElementById("budget").innerHTML = Math.round(budget);
-        //document.getElementById("purchasers").innerHTML = purchasers;
+        //document.getElementById("audience").innerHTML = audience;
         //document.getElementById("rating").innerHTML = rating;
         document.getElementById("comp_name").innerHTML = company_name;
         document.getElementById("employee_count").innerHTML = num_of_employees;
         document.getElementById("salary").innerHTML = salary;
+        document.getElementById("comp_worth").innerHTML = company_worth;
     }
-    
-    function update_form_text(){
-         document.getElementById("form_output").innerHTML = form_out;
+
+    function update_form_text() {
+        document.getElementById("form_output").innerHTML = form_out;
     }
-    function update_sale_text(){
+
+    function update_sale_text() {
         document.getElementById("sold_out").innerHTML = sold_out;
     }
-    
-    
 </script>
 
 </body>
 
-</html><br><br><br>
-Created by Austin Weber for Anthropology 230HON-015
-https://www.tutorialspoint.com/online_html_editor.php
+</html><br><br><br> Created by Austin Weber for Anthropology 230HON-015 https://www.tutorialspoint.com/online_html_editor.php
