@@ -22,28 +22,35 @@
     
     <b><span id="sold_out"></span></b>
     </div>
-    <button onclick="formButton()", id="continue_button">Continue to next media release</button>
+    <button onclick="continueButton()", id="continue_button">Continue to next media release</button>
 
 </body>
 
 <script>
     var profit = 0;
-    var cost = 60;
-    var budget = 10000;
+    var cost = 50;
+    var budget = 25000000;
     var oldbudget = 10;
-    var purchasers = 30000000 * Math.pow(rating, 2);
+    var purchasers = 1000000 * Math.pow(rating, 2);
     var rating = 0.75;
+    var pirates = 0;
 
     var max_employees = 1000;
-    var max_salary = 4000;
-    var num_of_employees = 500;
-    var salary = 2000;
+    var max_salary = 25000;
+    var num_of_employees = 1000;
+    var salary = 25000;
     
     var form_num = 0;
     var form_sal = 0;
 
     var company_name = "The Test Corporation";
+    var company_worth = 1000000;
     var form_out = "<- Press me once your values are set!"
+    
+    var pir_media_up = 40;
+    var pir_media_low = 120;
+    var pir_comp_up = 25000000000;
+    var pir_comp_low = 150000000000;
     
       document.getElementById("continue_button").setAttribute("hidden", "hidden");
         document.getElementById("sale_button").setAttribute("hidden", "hidden");
@@ -51,6 +58,14 @@
     var sold_out = "";
     update_display();
     update_form_text();
+    
+    function gaussianRandom(mean, stdev) {
+    let u = 1 - Math.random(); // Converting [0,1) to (0,1]
+    let v = Math.random();
+    let z = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+    // Transform to the desired mean and standard deviation:
+    return z * stdev + mean;
+}
     
     function formButton(){
         form_num = document.getElementById("fnum").value;
@@ -67,6 +82,16 @@
         salary = form_sal;
         update_form_text();
     }
+    
+    function continueButton() {
+        sold_out = "";
+        form_out = "<- Press me once your values are set!"
+        update_sale_text();
+        update_form_text();
+                update_display();
+        document.getElementById("continue_button").setAttribute("hidden", "hidden");
+            document.getElementById("input_button").removeAttribute("hidden");
+    }
 
 
     function myFunction() {
@@ -75,16 +100,44 @@
         x.appendChild(t);
         document.body.appendChild(x);
     }
+    
+    function determine_pirates(){
+        pirates = 0;
+        for (int i = 0; i < purchasers; i++){
+        if (Math.random() * 100 == 0){
+            pirates++;
+        } else if (gaussianRandom(pir_media_up + pir_media_low / 2),(pir_media_up + pir_media_low / 4) < cost) {
+            pirates++;
+        } else if (gaussianRandom(pir_comp_up + pir_comp_low / 2),(pir_comp_up + pir_comp_low / 4) < cost) {
+            pirates++;
+        }
+    }
+    }
 
     function next_month() {
+           if (num_of_employees > max_employees){
+            max_employees = num_of_employees;
+        }
+        if (salary > max_salary){
+            max_salary = salary;
+        }
          rating = Math.sqrt((num_of_employees / max_employees) * (salary / max_salary));
-                purchasers = 30000000 * (Math.pow(rating, 2));
+         rating = Math.round(rating * 100)/100;
+         
+        purchasers = 3000000 * (Math.pow(rating, 2));
+        determine_pirates();
+        purchasers = purchasers - pirates;
         profit = (purchasers * cost) - budget;
         oldbudget = budget;
         budget = oldbudget + (profit / 2);
+        company_worth = company_worth + (profit / 2);
        
-        
-        sold_out = "Congrats! Based on your employees and how much you paid them, your media had a rating of " + rating*100 + "/100, which means that means an audience of " + purchasers + " viewed your media! Your profit ended up being $" + profit + "(" + purchasers + " * " + cost + " - " + oldbudget + ")" + ", which means your next budget is a total of $" + budget;
+                form_out = "";
+                update_form_text();
+     
+        sold_out = "Congrats! Based on your employees and how much you paid them, your media had a rating of " + rating*100 + "/100, which means that means an audience of " + purchasers + " viewed your media! Your profit ended up being $" + profit + 
+        /*"(" + purchasers + " * " + cost + " - " + oldbudget + ")" +*/
+        ", which means your next budget is a total of $" + budget;
         document.getElementById("sale_button").setAttribute("hidden", "hidden");
             document.getElementById("continue_button").removeAttribute("hidden");
         update_sale_text();
